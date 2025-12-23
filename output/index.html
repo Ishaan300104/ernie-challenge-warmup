@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ERNIE Challenge - Generated Page</title>
+    <meta name="description" content="ERNIE Challenge Warmup - PDF to Web Page using PaddleOCR & ERNIE">
+    <title>Web Builder using PaddleOCR & ERNIE</title>
     <style>
         * {
             margin: 0;
@@ -11,141 +12,548 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --accent-color: #f093fb;
+            --text-dark: #2d3748;
+            --text-light: #4a5568;
+            --bg-light: #f7fafc;
+            --border-color: #e2e8f0;
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            line-height: 1.6;
-            color: #333;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+            line-height: 1.7;
+            color: var(--text-dark);
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 2rem;
+            padding: 2rem 1rem;
         }
 
         .container {
-            max-width: 900px;
+            max-width: 1000px;
             margin: 0 auto;
             background: white;
-            border-radius: 16px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.35);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 3rem 3rem 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 400px;
+            height: 400px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+
+        .badge-container {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .badge-icon {
+            margin-right: 0.4rem;
+            font-size: 1.1rem;
         }
 
         h1 {
-            color: #667eea;
             font-size: 2.5rem;
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 3px solid #667eea;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .subtitle {
+            font-size: 1.15rem;
+            opacity: 0.95;
+            font-weight: 400;
+            position: relative;
+            z-index: 1;
+        }
+
+        .content {
+            padding: 3rem;
+        }
+
+        .section {
+            margin-bottom: 2.5rem;
         }
 
         h2 {
-            color: #764ba2;
-            font-size: 2rem;
-            margin-top: 2rem;
+            color: var(--primary-color);
+            font-size: 1.85rem;
+            font-weight: 600;
             margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid var(--primary-color);
+            display: inline-block;
         }
 
         h3 {
-            color: #555;
-            font-size: 1.5rem;
+            color: var(--secondary-color);
+            font-size: 1.4rem;
+            font-weight: 600;
             margin-top: 1.5rem;
             margin-bottom: 0.75rem;
         }
 
         p {
+            color: var(--text-light);
             margin-bottom: 1rem;
             text-align: justify;
+            line-height: 1.8;
         }
 
-        ul, ol {
-            margin-left: 2rem;
-            margin-bottom: 1rem;
+        .workflow-container {
+            margin: 2rem 0;
         }
 
-        li {
+        .workflow-step {
+            background: var(--bg-light);
+            border-left: 4px solid var(--primary-color);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-radius: 8px;
+            position: relative;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .workflow-step:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.2);
+        }
+
+        .step-number {
+            position: absolute;
+            left: -15px;
+            top: -15px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .step-title {
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+            margin-left: 30px;
+        }
+
+        .step-description {
+            color: var(--text-light);
+            margin-left: 30px;
+            line-height: 1.7;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            border: 2px solid var(--primary-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .highlight-box h3 {
+            margin-top: 0;
+            color: var(--primary-color);
+        }
+
+        ul {
+            list-style: none;
+            padding-left: 0;
+            margin: 1rem 0;
+        }
+
+        ul li {
+            padding-left: 2rem;
+            margin-bottom: 0.75rem;
+            position: relative;
+            color: var(--text-light);
+            line-height: 1.7;
+        }
+
+        ul li::before {
+            content: "▹";
+            position: absolute;
+            left: 0.5rem;
+            color: var(--primary-color);
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+
+        .tech-stack {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .tech-card {
+            background: white;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.25rem;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .tech-card:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.2);
+        }
+
+        .tech-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .tech-name {
+            font-weight: 600;
+            color: var(--text-dark);
             margin-bottom: 0.5rem;
         }
 
-        code {
-            background: #f4f4f4;
-            padding: 0.2rem 0.4rem;
-            border-radius: 3px;
-            font-family: 'Courier New', monospace;
+        .tech-desc {
+            font-size: 0.9rem;
+            color: var(--text-light);
         }
 
         .footer {
-            margin-top: 3rem;
-            padding-top: 2rem;
-            border-top: 1px solid #eee;
+            background: var(--bg-light);
+            padding: 2rem 3rem;
             text-align: center;
-            color: #666;
-            font-size: 0.9rem;
+            border-top: 1px solid var(--border-color);
         }
 
-        .badge {
-            display: inline-block;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            margin-bottom: 1rem;
+        .footer-content {
+            color: var(--text-light);
+            font-size: 0.95rem;
+            line-height: 1.8;
+        }
+
+        .footer strong {
+            color: var(--primary-color);
+        }
+
+        .pipeline-visual {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .pipeline-item {
+            flex: 1;
+            min-width: 120px;
+            text-align: center;
+            padding: 1rem;
+            background: var(--bg-light);
+            border-radius: 10px;
+            border: 2px solid var(--border-color);
+        }
+
+        .pipeline-arrow {
+            font-size: 2rem;
+            color: var(--primary-color);
+            font-weight: bold;
         }
 
         @media (max-width: 768px) {
             body {
-                padding: 1rem;
+                padding: 1rem 0.5rem;
             }
 
-            .container {
-                padding: 1.5rem;
+            .header {
+                padding: 2rem 1.5rem 1.5rem;
             }
 
             h1 {
                 font-size: 2rem;
             }
 
+            .subtitle {
+                font-size: 1rem;
+            }
+
+            .content {
+                padding: 1.5rem;
+            }
+
+            .footer {
+                padding: 1.5rem 1.5rem;
+            }
+
+            .step-title {
+                font-size: 1.1rem;
+            }
+
+            .pipeline-visual {
+                flex-direction: column;
+            }
+
+            .pipeline-arrow {
+                transform: rotate(90deg);
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.75rem;
+            }
+
             h2 {
                 font-size: 1.5rem;
+            }
+
+            .tech-stack {
+                grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="badge">🤖 Generated with PaddleOCR-VL & ERNIE</div>
-        <h1>ERNIE Challenge - Sample Document</h1>
-<br>
-<h2>Introduction</h2>
-<p>Welcome to the ERNIE Challenge warmup task demonstration.</p>
-<br>
-<h2>About ERNIE</h2>
-<p>ERNIE (Enhanced Representation through kNowledge IntEgration) is Baidu's state-of-the-art language model series.</p>
-<br>
-<h3>Key Features</h3>
-<ul>
-<li>Advanced natural language understanding</li>
-<li>Multimodal capabilities</li>
-<li>Efficient fine-tuning support</li>
-<li>Open-source models available</li>
-</ul>
-<br>
-<h2>PaddleOCR</h2>
-<p>PaddleOCR is a powerful OCR toolkit that supports multiple languages and document types.</p>
-<br>
-<h3>Capabilities</h3>
-<ul>
-<li>Text detection and recognition</li>
-<li>Layout analysis</li>
-<li>Document understanding</li>
-<li>Multi-language support</li>
-</ul>
-<br>
-<h2>Conclusion</h2>
-<p>This demonstration shows the integration of PaddleOCR-VL and ERNIE for web page generation.</p>
-        <div class="footer">
-            <p>Generated for the ERNIE Challenge Warmup Task</p>
-            <p>Powered by <strong>PaddleOCR-VL</strong> and <strong>ERNIE Model</strong></p>
-        </div>
+        <header class="header">
+            <div class="badge-container">
+                <span class="badge">
+                    <span class="badge-icon">🤖</span>
+                    Generated with AI
+                </span>
+                <span class="badge">
+                    <span class="badge-icon">📄</span>
+                    PaddleOCR-VL
+                </span>
+                <span class="badge">
+                    <span class="badge-icon">✨</span>
+                    ERNIE Model
+                </span>
+            </div>
+            <h1>Web Builder using PaddleOCR & ERNIE</h1>
+            <p class="subtitle">Automated PDF-to-Web Pipeline for the ERNIE Challenge Warm-up Task</p>
+        </header>
+
+        <main class="content">
+            <section class="section">
+                <h2>Objective</h2>
+                <p>
+                    The goal of this warm-up task is to demonstrate an end-to-end pipeline that converts PDF
+                    documents into a deployable web page using OCR, document understanding, and large language
+                    models. This project showcases the integration of PaddleOCR-VL for optical character recognition
+                    and layout analysis, combined with ERNIE's powerful language generation capabilities to create
+                    production-ready web content.
+                </p>
+            </section>
+
+            <section class="section">
+                <h2>Overall Workflow</h2>
+                <p>
+                    The complete pipeline follows a systematic approach to transform static PDF documents into
+                    dynamic, accessible web pages. Each stage builds upon the previous one, creating a seamless
+                    conversion process.
+                </p>
+
+                <div class="workflow-container">
+                    <div class="workflow-step">
+                        <div class="step-number">1</div>
+                        <div class="step-title">Input PDF Document</div>
+                        <div class="step-description">
+                            A PDF document is provided as input. This document may contain structured text, headings,
+                            tables, and layout information. The system accepts various PDF formats and preserves the
+                            original document structure throughout the conversion process.
+                        </div>
+                    </div>
+
+                    <div class="workflow-step">
+                        <div class="step-number">2</div>
+                        <div class="step-title">Text and Layout Extraction using PaddleOCR-VL</div>
+                        <div class="step-description">
+                            PaddleOCR-VL is used to extract textual content along with layout-level information such as
+                            paragraphs, headings, lists, and structural blocks from the PDF pages. The advanced vision-language
+                            model understands document semantics and preserves hierarchical relationships. The output of this
+                            stage is a structured representation of the document content with maintained formatting and layout.
+                        </div>
+                    </div>
+
+                    <div class="workflow-step">
+                        <div class="step-number">3</div>
+                        <div class="step-title">Conversion to Markdown</div>
+                        <div class="step-description">
+                            The extracted text and layout information are converted into clean, well-structured Markdown format.
+                            Headings, bullet points, code blocks, and sections are preserved to maintain document readability
+                            and hierarchy. This intermediate format provides flexibility for further processing and ensures
+                            consistent structure across different document types.
+                        </div>
+                    </div>
+
+                    <div class="workflow-step">
+                        <div class="step-number">4</div>
+                        <div class="step-title">Web Page Generation using ERNIE Model</div>
+                        <div class="step-description">
+                            The Markdown content is passed to the ERNIE language model. ERNIE is used to generate a complete
+                            HTML-based web page from the Markdown input. This includes semantic structuring, section organization,
+                            and content refinement suitable for a web interface. The model applies intelligent styling decisions
+                            and ensures optimal user experience through responsive design and accessibility features.
+                        </div>
+                    </div>
+
+                    <div class="workflow-step">
+                        <div class="step-number">5</div>
+                        <div class="step-title">Static Website Deployment</div>
+                        <div class="step-description">
+                            The generated HTML content is prepared as a static website. The website is deployed using GitHub Pages,
+                            enabling public access through a hosted URL. The deployment process is automated through CI/CD pipelines,
+                            ensuring rapid iteration and updates. The final webpage is optimized for performance, SEO, and
+                            cross-browser compatibility.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>Technology Stack</h2>
+                <div class="tech-stack">
+                    <div class="tech-card">
+                        <div class="tech-icon">📷</div>
+                        <div class="tech-name">PaddleOCR-VL</div>
+                        <div class="tech-desc">Vision-language OCR for document understanding</div>
+                    </div>
+                    <div class="tech-card">
+                        <div class="tech-icon">🧠</div>
+                        <div class="tech-name">ERNIE</div>
+                        <div class="tech-desc">Language model for content generation</div>
+                    </div>
+                    <div class="tech-card">
+                        <div class="tech-icon">📝</div>
+                        <div class="tech-name">Markdown</div>
+                        <div class="tech-desc">Structured content representation</div>
+                    </div>
+                    <div class="tech-card">
+                        <div class="tech-icon">🌐</div>
+                        <div class="tech-name">GitHub Pages</div>
+                        <div class="tech-desc">Static website hosting</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <div class="highlight-box">
+                    <h3>Dataset Context</h3>
+                    <p>
+                        The dataset used for this workflow has been web-scraped and curated from <strong>Arduino official
+                        documentation</strong> and <strong>Arduino user forums</strong>. This ensures technical accuracy
+                        and real-world relevance for the generated content. The curated dataset provides diverse examples
+                        of technical documentation, making it ideal for testing OCR accuracy and content understanding
+                        capabilities.
+                    </p>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>Key Features</h2>
+                <ul>
+                    <li><strong>Automated Processing:</strong> End-to-end pipeline requiring minimal human intervention</li>
+                    <li><strong>Layout Preservation:</strong> Maintains document structure including headings, lists, and hierarchies</li>
+                    <li><strong>Intelligent Generation:</strong> ERNIE model applies semantic understanding to create coherent web content</li>
+                    <li><strong>Responsive Design:</strong> Generated pages adapt seamlessly to different screen sizes</li>
+                    <li><strong>Deployment Ready:</strong> Direct integration with GitHub Pages for instant publishing</li>
+                    <li><strong>Accessibility:</strong> Semantic HTML ensures content is accessible to all users</li>
+                </ul>
+            </section>
+
+            <section class="section">
+                <h2>Outcome</h2>
+                <p>
+                    The final output is a <strong>fully functional static web page</strong> generated automatically from a
+                    PDF document, demonstrating the seamless integration of OCR, document understanding, language modeling,
+                    and deployment technologies. This project showcases how modern AI technologies can work together to
+                    transform traditional documents into modern, accessible web content.
+                </p>
+                <p>
+                    This warm-up task serves as a foundation for more advanced applications in document processing,
+                    knowledge extraction, and automated content generation. The pipeline can be extended to handle
+                    various document types, languages, and output formats, making it a versatile solution for
+                    digital transformation initiatives.
+                </p>
+            </section>
+
+            <section class="section">
+                <h2>Pipeline Visualization</h2>
+                <div class="pipeline-visual">
+                    <div class="pipeline-item">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">📄</div>
+                        <div style="font-weight: 600;">PDF Input</div>
+                    </div>
+                    <div class="pipeline-arrow">→</div>
+                    <div class="pipeline-item">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">👁️</div>
+                        <div style="font-weight: 600;">OCR Extraction</div>
+                    </div>
+                    <div class="pipeline-arrow">→</div>
+                    <div class="pipeline-item">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">📝</div>
+                        <div style="font-weight: 600;">Markdown</div>
+                    </div>
+                    <div class="pipeline-arrow">→</div>
+                    <div class="pipeline-item">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🤖</div>
+                        <div style="font-weight: 600;">ERNIE Gen</div>
+                    </div>
+                    <div class="pipeline-arrow">→</div>
+                    <div class="pipeline-item">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🌐</div>
+                        <div style="font-weight: 600;">Web Page</div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <div class="footer-content">
+                <p><strong>ERNIE Challenge - Warm-up Task Submission</strong></p>
+                <p>This webpage was automatically generated from a PDF document using <strong>PaddleOCR-VL</strong> for text extraction and <strong>ERNIE</strong> for intelligent web page generation.</p>
+                <p style="margin-top: 1rem; opacity: 0.8;">Powered by Baidu AI Technology | Deployed on GitHub Pages</p>
+            </div>
+        </footer>
     </div>
 </body>
 </html>
