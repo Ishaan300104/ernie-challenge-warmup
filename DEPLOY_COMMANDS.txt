@@ -1,0 +1,46 @@
+═══════════════════════════════════════════════════════════
+           COPY-PASTE DEPLOYMENT COMMANDS
+═══════════════════════════════════════════════════════════
+
+STEP 1: Navigate to project
+───────────────────────────────────────────────────────────
+cd /home/ishaan/ernie
+
+STEP 2: Initialize Git
+───────────────────────────────────────────────────────────
+git init
+git add .
+git commit -m "ERNIE Challenge Warmup: PDF to Web Builder"
+git branch -M main
+
+STEP 3: Create GitHub repo at https://github.com/new
+───────────────────────────────────────────────────────────
+Name: ernie-warmup
+Visibility: Public
+DO NOT add README
+
+STEP 4: Push to GitHub (replace YOUR_USERNAME and REPO_NAME)
+───────────────────────────────────────────────────────────
+git remote add origin https://github.com/YOUR_USERNAME/REPO_NAME.git
+git push -u origin main
+
+STEP 5: Enable GitHub Pages
+───────────────────────────────────────────────────────────
+1. Go to: https://github.com/YOUR_USERNAME/REPO_NAME/settings/pages
+2. Under "Source": Select "GitHub Actions"
+3. Done!
+
+STEP 6: Check deployment
+───────────────────────────────────────────────────────────
+1. Go to Actions tab
+2. Wait for green checkmark (1-2 min)
+3. Visit: https://YOUR_USERNAME.github.io/REPO_NAME/
+
+═══════════════════════════════════════════════════════════
+                    SUBMISSION URLS
+═══════════════════════════════════════════════════════════
+
+Live Page: https://YOUR_USERNAME.github.io/REPO_NAME/
+Repository: https://github.com/YOUR_USERNAME/REPO_NAME
+
+═══════════════════════════════════════════════════════════
