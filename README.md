@@ -2,6 +2,8 @@
 
 ## Web Builder: Build a Web Page with PaddleOCR & ERNIE
 
+> Link: https://Ishaan300104.github.io/ernie-challenge-warmup
+
 This project demonstrates the integration of **PaddleOCR-VL** and **ERNIE** models to automatically convert PDF documents into beautiful web pages.
 
 ### 🎯 Challenge Requirements
@@ -186,3 +188,4 @@ This is a challenge submission. Feel free to fork and modify for your own use!
 **Generated for the ERNIE Challenge Warmup Task**
 
 Powered by **PaddleOCR-VL** and **ERNIE Model** 🚀
+
