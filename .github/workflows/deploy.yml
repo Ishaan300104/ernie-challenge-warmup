@@ -32,7 +32,7 @@ jobs:
         pip install -r requirements.txt
 
     - name: Run warmup script
-      run: python warmup.py
+      run: python warmup.py Warmup_PaddleOCR_ERNIE_Web_Builder.pdf
 
     - name: Setup Pages
       uses: actions/configure-pages@v4
